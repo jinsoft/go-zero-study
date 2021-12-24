@@ -1,0 +1,52 @@
+syntax = "v1"
+
+info(
+    title: "用户实例"
+    desc: "用户实例"
+    author: "ainiok"
+    email: "job@ainiok.com"
+)
+
+type User {
+    Id int64 `json:"id"`
+    Phone string `json:"phone"`
+    Nickname string `json:"nickname"`
+    Sex int64 `json:"sex"`
+    Avatar string `json:"avatar"`
+}
+
+type LoginSuccessResp {
+    AccessToken string `json:"accessToken"`
+    AccessExpire int64 `json:"accessExpire"`
+    RefreshAfter int64 `json:"refreshAfter"`
+}
+
+type (
+    MobileRegisterReq {
+        phone string `json:"phone"`
+        nickname string `json:"nickname"`
+    }
+    EmailRegisterReq {
+        email string `json:"email"`
+        nickname string `json:"nickname"`
+    }
+
+    LoginWithEmailReq {
+        email string `json:"email"`
+        password string `json:"password"`
+    }
+
+    LoginWithPhoneReq {
+        phone string `json:"phone"`
+        code string `json:"code"`
+    }
+)
+
+type (
+    UserInfoReq {
+    }
+
+    UserInfoResp {
+        UserInfo User `json:"userinfo"`
+    }
+)
