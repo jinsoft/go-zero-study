@@ -1,0 +1,8 @@
+Name: identity-rpc
+ListenOn: 127.0.0.1:8720
+
+JwtAuth:
+  AccessSecret: eb6dda416d3411ecb1780a0027000014
+  AccessExpire: 2592000
+Redis:
+  Host: 127.0.0.1:6379

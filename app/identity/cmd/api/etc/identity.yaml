@@ -1,0 +1,19 @@
+Name: identity-api
+Host: 0.0.0.0
+Port: 8721
+
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505ea0
+
+
+#不需要授权认证的服务path
+NoAuthUrls:
+  #用户服务
+  - "/usercenter/v1/user/register"
+  - "/usercenter/v1/user/login"
+
+
+#rpc service.
+IdentityRpcConf:
+  Endpoints:
+    - 127.0.0.1:8720

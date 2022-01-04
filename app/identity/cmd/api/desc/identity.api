@@ -1,0 +1,28 @@
+syntax = "v1"
+
+info(
+	title: "授权认证服务"
+	desc: "授权认证服务"
+	author: "xiaojin"
+	email: "jx_xiaojin@aliyun.com"
+)
+
+type (
+	VerifyTokenReq {
+	}
+	VerifyTokenRsp {
+		UserId int64 `json:"userId"`
+		Ok     bool  `json:"ok"`
+	}
+)
+
+@server(
+	group: verify
+	prefix: identity/v1
+)
+
+service identity {
+	@doc "验证认证请求token"
+	@handler token
+	get /verify/token (VerifyTokenReq) returns (VerifyTokenRsp)
+}
