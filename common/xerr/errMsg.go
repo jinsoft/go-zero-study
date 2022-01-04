@@ -5,7 +5,7 @@ var message map[uint32]string
 func init() {
 	message = make(map[uint32]string)
 
-	message[DB_ERROR] = "数据库繁忙,请稍后再试"
+	message[DbError] = "数据库繁忙,请稍后再试"
 }
 
 func MapErrMsg(errcode uint32) string {
