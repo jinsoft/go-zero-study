@@ -18,19 +18,18 @@ var (
 	userRowsExpectAutoSet   = strings.Join(stringx.Remove(userFieldNames, "`id`", "`create_time`", "`update_time`"), ",")
 	userRowsWithPlaceHolder = strings.Join(stringx.Remove(userFieldNames, "`id`", "`create_time`", "`update_time`"), "=?,") + "=?"
 
-	cacheUserIdPrefix    = "cache:user:id:"
-	cacheUserEmailPrefix = "cache:user:email:"
-	cacheUserPhonePrefix = "cache:user:phone:"
+	cacheUserIdPrefix     = "cache:user:id:"
+	cacheUserMobilePrefix = "cache:user:mobile:"
 )
 
 type (
 	UserModel interface {
 		Insert(data *User) (sql.Result, error)
 		FindOne(id int64) (*User, error)
-		FindOneByEmail(email string) (*User, error)
-		FindOneByPhone(phone string) (*User, error)
+		FindOneByMobile(mobile string) (*User, error)
 		Update(data *User) error
 		Delete(id int64) error
+		Trans(fn func(session sqlx.Session) error) error
 	}
 
 	defaultUserModel struct {
@@ -40,8 +39,7 @@ type (
 
 	User struct {
 		Id       int64          `db:"id"`
-		Phone    string         `db:"phone"`    // 手机号
-		Email    string         `db:"email"`    // 邮箱
+		Mobile   string         `db:"mobile"`   // 手机号
 		Nickname string         `db:"nickname"` // 昵称
 		Password string         `db:"password"` // 密码
 		Sex      sql.NullInt64  `db:"sex"`      // 性别
@@ -57,13 +55,12 @@ func NewUserModel(conn sqlx.SqlConn, c cache.CacheConf) UserModel {
 }
 
 func (m *defaultUserModel) Insert(data *User) (sql.Result, error) {
-	userEmailKey := fmt.Sprintf("%s%v", cacheUserEmailPrefix, data.Email)
-	userPhoneKey := fmt.Sprintf("%s%v", cacheUserPhonePrefix, data.Phone)
 	userIdKey := fmt.Sprintf("%s%v", cacheUserIdPrefix, data.Id)
+	userMobileKey := fmt.Sprintf("%s%v", cacheUserMobilePrefix, data.Mobile)
 	ret, err := m.Exec(func(conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
-		return conn.Exec(query, data.Phone, data.Email, data.Nickname, data.Password, data.Sex, data.Avatar)
-	}, userEmailKey, userPhoneKey, userIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
+		return conn.Exec(query, data.Mobile, data.Nickname, data.Password, data.Sex, data.Avatar)
+	}, userIdKey, userMobileKey)
 	return ret, err
 }
 
@@ -84,32 +81,12 @@ func (m *defaultUserModel) FindOne(id int64) (*User, error) {
 	}
 }
 
-func (m *defaultUserModel) FindOneByEmail(email string) (*User, error) {
-	userEmailKey := fmt.Sprintf("%s%v", cacheUserEmailPrefix, email)
+func (m *defaultUserModel) FindOneByMobile(mobile string) (*User, error) {
+	userMobileKey := fmt.Sprintf("%s%v", cacheUserMobilePrefix, mobile)
 	var resp User
-	err := m.QueryRowIndex(&resp, userEmailKey, m.formatPrimary, func(conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
-		query := fmt.Sprintf("select %s from %s where `email` = ? limit 1", userRows, m.table)
-		if err := conn.QueryRow(&resp, query, email); err != nil {
-			return nil, err
-		}
-		return resp.Id, nil
-	}, m.queryPrimary)
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
-func (m *defaultUserModel) FindOneByPhone(phone string) (*User, error) {
-	userPhoneKey := fmt.Sprintf("%s%v", cacheUserPhonePrefix, phone)
-	var resp User
-	err := m.QueryRowIndex(&resp, userPhoneKey, m.formatPrimary, func(conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
-		query := fmt.Sprintf("select %s from %s where `phone` = ? limit 1", userRows, m.table)
-		if err := conn.QueryRow(&resp, query, phone); err != nil {
+	err := m.QueryRowIndex(&resp, userMobileKey, m.formatPrimary, func(conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+		query := fmt.Sprintf("select %s from %s where `mobile` = ? limit 1", userRows, m.table)
+		if err := conn.QueryRow(&resp, query, mobile); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -126,13 +103,21 @@ func (m *defaultUserModel) FindOneByPhone(phone string) (*User, error) {
 
 func (m *defaultUserModel) Update(data *User) error {
 	userIdKey := fmt.Sprintf("%s%v", cacheUserIdPrefix, data.Id)
-	userEmailKey := fmt.Sprintf("%s%v", cacheUserEmailPrefix, data.Email)
-	userPhoneKey := fmt.Sprintf("%s%v", cacheUserPhonePrefix, data.Phone)
+	userMobileKey := fmt.Sprintf("%s%v", cacheUserMobilePrefix, data.Mobile)
 	_, err := m.Exec(func(conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userRowsWithPlaceHolder)
-		return conn.Exec(query, data.Phone, data.Email, data.Nickname, data.Password, data.Sex, data.Avatar, data.Id)
-	}, userPhoneKey, userIdKey, userEmailKey)
+		return conn.Exec(query, data.Mobile, data.Nickname, data.Password, data.Sex, data.Avatar, data.Id)
+	}, userIdKey, userMobileKey)
 	return err
+}
+
+func (m *defaultUserModel) Trans(fn func(session sqlx.Session) error) error {
+
+	err := m.Transact(func(session sqlx.Session) error {
+		return fn(session)
+	})
+	return err
+
 }
 
 func (m *defaultUserModel) Delete(id int64) error {
@@ -142,12 +127,11 @@ func (m *defaultUserModel) Delete(id int64) error {
 	}
 
 	userIdKey := fmt.Sprintf("%s%v", cacheUserIdPrefix, id)
-	userEmailKey := fmt.Sprintf("%s%v", cacheUserEmailPrefix, data.Email)
-	userPhoneKey := fmt.Sprintf("%s%v", cacheUserPhonePrefix, data.Phone)
+	userMobileKey := fmt.Sprintf("%s%v", cacheUserMobilePrefix, data.Mobile)
 	_, err = m.Exec(func(conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.Exec(query, id)
-	}, userPhoneKey, userIdKey, userEmailKey)
+	}, userMobileKey, userIdKey)
 	return err
 }
 

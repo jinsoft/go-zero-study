@@ -3,9 +3,9 @@ package types
 
 type User struct {
 	Id       int64  `json:"id"`
-	Phone    string `json:"phone"`
+	Mobile   string `json:"mobile"`
 	Nickname string `json:"nickname"`
-	Sex      int64   `json:"sex"`
+	Sex      int64  `json:"sex"`
 	Avatar   string `json:"avatar"`
 }
 
@@ -13,6 +13,16 @@ type LoginSuccessResp struct {
 	AccessToken  string `json:"accessToken"`
 	AccessExpire int64  `json:"accessExpire"`
 	RefreshAfter int64  `json:"refreshAfter"`
+}
+
+type RegisterReq struct {
+	Mobile   string `json:"mobile"`
+	Nickname string `json:"nickname"`
+}
+
+type LoginReq struct {
+	Mobile   string `json:"mobile"`
+	Password string `json:"password"`
 }
 
 type MobileRegisterReq struct {
@@ -40,4 +50,10 @@ type UserInfoReq struct {
 
 type UserInfoResp struct {
 	UserInfo User `json:"userinfo"`
+}
+
+type UpdateReq struct {
+	Email    string `json:"email"`
+	Nickname string `json:"nickname"`
+	Password string `json:"password"`
 }

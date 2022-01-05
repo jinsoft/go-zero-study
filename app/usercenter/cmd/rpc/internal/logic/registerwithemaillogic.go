@@ -31,7 +31,7 @@ func NewRegisterWithEmailLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 func (l *RegisterWithEmailLogic) RegisterWithEmail(in *pb.RegisterWithEmailReq) (*pb.LoginSuccessResp, error) {
 	user, err := l.svcCtx.UserModel.FindOneByEmail(in.Email)
 	if err != nil && err != model.ErrNotFound {
-		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "email:%s,err:%v", in.Email, err)
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DbError), "email:%s,err:%v", in.Email, err)
 	}
 	if user != nil {
 		return nil, errors.Wrapf(ErrUserAlreadyRegisterError, "用户已经存在 email:%s,err:%v", in.Email, err)

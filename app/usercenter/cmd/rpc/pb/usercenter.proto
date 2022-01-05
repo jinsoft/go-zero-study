@@ -6,10 +6,19 @@ option go_package = "pb";
 
 message User {
   int64 id = 1;
-  string phone = 2;
+  string mobile = 2;
   string nickname = 3;
   int64 sex = 4;
   string avatar = 5;
+}
+
+message RegisterReq {
+  string mobile =1;
+  string nickname = 2;
+}
+
+message LoginReq{
+  string  authType = 1;
 }
 
 message RegisterWithEmailReq {
@@ -37,7 +46,7 @@ message GetUserInfoResp {
 }
 
 service Usercenter {
-  rpc registerWithEmail(RegisterWithEmailReq) returns (LoginSuccessResp);
-  rpc loginWithEmail(LoginWithEmailReq) returns(LoginSuccessResp);
+  rpc register(RegisterReq) returns (LoginSuccessResp);
+  rpc login(LoginWithEmailReq) returns(LoginSuccessResp);
   rpc getUserInfo(GetUserInfoReq) returns(GetUserInfoResp);
 }

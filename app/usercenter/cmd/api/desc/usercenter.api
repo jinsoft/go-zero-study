@@ -17,23 +17,19 @@ import (
 )
 
 service usercenter {
-	@doc "通过手机号快速注册"
-	@handler registerWithPhone
-	post /users/registerWithPhone (MobileRegisterReq) returns (LoginSuccessResp)
+	@doc "注册"
+	@handler register
+	post /users/register (RegisterReq) returns (LoginSuccessResp)
 	
-	@doc "通过邮箱注册"
-	@handler registerWithEmail
-	post /users/registerWithEmail (EmailRegisterReq) returns (LoginSuccessResp)
-	
-	@doc "手机验证码登录"
-	@handler loginWithPhone
-	post /users/loginWithPhone (LoginWithPhoneReq) returns (LoginSuccessResp)
-	
-	@doc "邮箱密码登录"
-	@handler loginWithEmail
-	post /users/loginWithEmail (LoginWithEmailReq) returns (LoginSuccessResp)
+	@doc "登录"
+	@handler login
+	post /users/loginWithPhone (LoginReq) returns (LoginSuccessResp)
 	
 	@doc "获取用户信息"
 	@handler detail
 	post /user/detail (UserInfoReq) returns (UserInfoResp)
+	
+	@doc "更新用户信息"
+	@handler update
+	post /user/update (UpdateReq) returns (UserInfoResp)
 }

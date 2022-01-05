@@ -15,28 +15,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/users/registerWithPhone",
-				Handler: user.RegisterWithPhoneHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/users/registerWithEmail",
-				Handler: user.RegisterWithEmailHandler(serverCtx),
+				Path:    "/users/register",
+				Handler: user.RegisterHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/users/loginWithPhone",
-				Handler: user.LoginWithPhoneHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/users/loginWithEmail",
-				Handler: user.LoginWithEmailHandler(serverCtx),
+				Handler: user.LoginHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/user/detail",
 				Handler: user.DetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user/update",
+				Handler: user.UpdateHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/usercenter/v1"),
