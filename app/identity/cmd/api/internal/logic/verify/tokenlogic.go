@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
-	"github.com/tal-tech/go-zero/rest/token"
+	"github.com/zeromicro/go-zero/rest/token"
 	"it-ku/app/identity/cmd/rpc/identity"
 	"it-ku/common/ctxdata"
 	"it-ku/common/xerr"
@@ -15,7 +15,7 @@ import (
 	"it-ku/app/identity/cmd/api/internal/svc"
 	"it-ku/app/identity/cmd/api/internal/types"
 
-	"github.com/tal-tech/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type TokenLogic struct {

@@ -1,8 +1,8 @@
 package svc
 
 import (
-	"github.com/tal-tech/go-zero/core/stores/redis"
-	"github.com/tal-tech/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"it-ku/app/usercenter/cmd/rpc/internal/config"
 	"it-ku/app/usercenter/model"
 )

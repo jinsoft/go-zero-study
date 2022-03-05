@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"github.com/tal-tech/go-zero/zrpc"
+	"github.com/zeromicro/go-zero/zrpc"
 	"it-ku/app/identity/cmd/api/internal/config"
 	"it-ku/app/identity/cmd/rpc/identity"
 )
