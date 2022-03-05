@@ -10,7 +10,7 @@ import (
 	"it-ku/app/identity/cmd/rpc/internal/svc"
 	"it-ku/app/identity/cmd/rpc/pb"
 
-	"github.com/tal-tech/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 var ErrClearTokenError = xerr.NewErrMsg("退出token失败")

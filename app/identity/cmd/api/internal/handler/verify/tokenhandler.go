@@ -3,7 +3,7 @@ package verify
 import (
 	"net/http"
 
-	"github.com/tal-tech/go-zero/rest/httpx"
+	"github.com/zeromicro/go-zero/rest/httpx"
 	"it-ku/app/identity/cmd/api/internal/logic/verify"
 	"it-ku/app/identity/cmd/api/internal/svc"
 	"it-ku/app/identity/cmd/api/internal/types"
